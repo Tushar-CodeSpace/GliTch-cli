@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  auth-service:
+    build: ./auth-service
+    container_name: glitch-auth-service
+    ports:
+      - "8080:8080"
+    networks:
+      - glitch-net
+
+  tui-client:
+    build: ./tui-client
+    container_name: glitch-tui-client
+    depends_on:
+      - auth-service
+    environment:
+      - AUTH_URL=http://auth-service:8080/api/v1/login
+    stdin_open: true  # Keeps stdin open for TUI interaction
+    tty: true         # Allocates a pseudo-TTY
+    networks:
+      - glitch-net
+
+networks:
+  glitch-net:
+    driver: bridge
